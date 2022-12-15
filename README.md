@@ -7,8 +7,12 @@ This package exposes the [`blendShapes`](https://developer.apple.com/documentati
 Starting the face tracking can be done either by using the UIKit/SwiftUI view and run `FTKit.shared.start()` or hidden on a host view (most top view controller) by running `FTKit.shared.start(hiddenOnView:)`. 
 
 
+## Setup
 
-## TopViewController Extension
+`NSCameraUsageDescription` needs to be set in the the host app
+
+
+### TopViewController Extension
 
 ```
 extension UIApplication {
