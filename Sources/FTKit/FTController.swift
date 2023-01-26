@@ -1,8 +1,7 @@
 import ARKit
 
 public class FTController: NSObject, ARSCNViewDelegate, ARSessionDelegate {
-    
-    var configuration: FTConfiguration?
+    var configuration: FTConfiguration!
     public var sceneView: ARSCNView? {
         didSet {
             sceneView?.delegate = self
@@ -32,32 +31,70 @@ extension FTController {
 //        return contentNode
         return addFaceGeometry()
     }
+    
 
     public func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
-        guard let faceAnchor = anchor as? ARFaceAnchor else { return }
-
+        guard let faceAnchor = anchor as? ARFaceAnchor,
+              let currentFrame = sceneView?.session.currentFrame else { return }
+        
         updateFaceGeometry(on: faceAnchor, with: node)
         
-        let data = FTData(blendShapes: getBlendShapes(on: faceAnchor),
-                          lightEstimate: getLightEstimate(),
-                          depthmap: getDepthMap(),
-                          lookAtPoint: getLookAtPoint(on: faceAnchor),
-                          faceGeometryVertices: faceAnchor.geometry.vertices)
+        
+        let timestamp = getTimestamp(timestamp: currentFrame.timestamp)
+        var blendShapes: [String : Double]? = nil
+        var lightEstimate: [String: Double]? = nil
+    //    public let depthmap: CVPixelBuffer?
+        var lookAtPoint: [String: Double]? = nil
+        var faceGeometryVertices: [simd_float3]? = nil
+        
+        
+        if configuration.captureBlendShapes {
+            blendShapes = getBlendShapes(on: faceAnchor)
+        }
+        if configuration.enableLightEstimate {
+            lightEstimate = getLightEstimate()
+        }
+//        if configuration.captureDepthMap {
+//            depthmap = getDepthMap()
+//        }
+        if configuration.captureLookAtPoint {
+            lookAtPoint = getLookAtPoint(on: faceAnchor)
+        }
+        if configuration.captureFaceVertices {
+            if configuration.faceGeometryVerticesIndexs.isEmpty {
+                faceGeometryVertices = faceAnchor.geometry.vertices
+            } else {
+                faceGeometryVertices = []
+                for index in configuration.faceGeometryVerticesIndexs {
+                    faceGeometryVertices!.append(faceAnchor.geometry.vertices[index])
+                }
+            }
+        }
+        
+        let data = FTData(timestamp: timestamp,
+                          blendShapes: blendShapes,
+                          lightEstimate: lightEstimate,
+                          lookAtPoint: lookAtPoint,
+                          faceGeometryVertices: faceGeometryVertices)
         self.configuration?.dataHandler?(data)
     }
+    
+    
+    private func getTimestamp(timestamp: TimeInterval) -> Double {
+        let refDate = Date() - ProcessInfo.processInfo.systemUptime
+        return Date(timeInterval: timestamp, since: refDate).timeIntervalSince1970
+    }
 
+    
     private func getBlendShapes(on faceAnchor: ARFaceAnchor) -> [String: Double] {
         var blendShapes: [String: Double] = [:]
         blendShapes = faceAnchor.blendShapes.reduce(into: [:], { partialResult, blendShape in
             partialResult[blendShape.key.rawValue] = blendShape.value.doubleValue
         })
-        if let timestamp = sceneView?.session.currentFrame?.timestamp {
-            blendShapes["timestamp"] = timestamp
-        }
-
         return blendShapes
     }
 
+    
     private func getLightEstimate() -> [String: Double] {
         guard let lightEstimate = sceneView?.session.currentFrame?.lightEstimate else { return [:] }
 
@@ -67,9 +104,11 @@ extension FTController {
         ]
     }
 
+    
     private func getDepthMap() -> CVPixelBuffer? {
         sceneView?.session.currentFrame?.capturedDepthData?.depthDataMap
     }
+    
     
     private func getLookAtPoint(on faceAnchor: ARFaceAnchor) -> [String: Double] {
         [
@@ -78,6 +117,7 @@ extension FTController {
             "lookAtPoint.Z": Double(faceAnchor.lookAtPoint.z),
         ]
     }
+    
     
     private func addFaceGeometry() -> SCNNode? {
         guard let device = sceneView?.device else {
@@ -99,6 +139,7 @@ extension FTController {
         node.geometry?.firstMaterial?.fillMode = .lines
         return node
     }
+    
     
     private func updateFaceGeometry(on faceAnchor: ARFaceAnchor, with node: SCNNode) {
         guard let faceGeometry = node.geometry as? ARSCNFaceGeometry else {
