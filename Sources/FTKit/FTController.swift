@@ -120,12 +120,15 @@ extension FTController {
         let deviceTransform = frame.camera.transform.columns.3
         let devicePosition = simd_float3(x: deviceTransform.x, y: deviceTransform.y, z: deviceTransform.z)
         
+        // Translating position of the left eye from face to world coordinates
         let leftEyeWorldTransform = matrix_multiply(faceAnchor.transform, faceAnchor.leftEyeTransform).columns.3
         let leftEyePosition = simd_float3(x: leftEyeWorldTransform.x, y: leftEyeWorldTransform.y, z: leftEyeWorldTransform.z)
         
+        // Translating position of the right eye from face to world coordinates
         let rightEyeWorldTransform = matrix_multiply(faceAnchor.transform, faceAnchor.rightEyeTransform).columns.3
         let rightEyePosition = simd_float3(x: rightEyeWorldTransform.x, y: rightEyeWorldTransform.y, z: rightEyeWorldTransform.z)
         
+        // Getting the point in middle betweeen the eyes
         let eyesPostion = mix(leftEyePosition, rightEyePosition, t: 0.5)
  
         return Double(distance(devicePosition, eyesPostion))
