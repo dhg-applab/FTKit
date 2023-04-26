@@ -114,8 +114,8 @@ extension FTController {
         sceneView?.session.currentFrame?.capturedDepthData?.depthDataMap
     }
     
-    private func getDistanceToScreen(on faceAnchor: ARFaceAnchor) -> Double {
-        guard let frame = sceneView?.session.currentFrame else { return 0.0 }
+    private func getDistanceToScreen(on faceAnchor: ARFaceAnchor) -> Double? {
+        guard let frame = sceneView?.session.currentFrame else { return nil }
         
         let deviceTransform = frame.camera.transform.columns.3
         let devicePosition = simd_float3(x: deviceTransform.x, y: deviceTransform.y, z: deviceTransform.z)
