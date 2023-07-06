@@ -15,6 +15,7 @@ public struct FTConfiguration {
     let captureBlendShapes: Bool
     let captureLookAtPoint: Bool
     let captureDepthMap: Bool
+    let captureDistanceToScreen: Bool
     let captureFaceVertices: Bool
     let faceGeometryVerticesIndexs: [Int]
     
@@ -25,6 +26,7 @@ public struct FTConfiguration {
                 captureBlendShapes: Bool = true,
                 captureLookAtPoint: Bool = true,
                 captureDepthMap: Bool = true,
+                captureDistanceToScreen: Bool = true,
                 captureFaceVertices: Bool = true,
                 faceGeometryVerticesIndexs: [Int] = []) {
         self.dataHandler = dataHandler
@@ -34,6 +36,7 @@ public struct FTConfiguration {
         self.captureBlendShapes = captureBlendShapes
         self.captureLookAtPoint = captureLookAtPoint
         self.captureDepthMap = captureDepthMap
+        self.captureDistanceToScreen = captureDistanceToScreen
         self.captureFaceVertices = captureFaceVertices
         self.faceGeometryVerticesIndexs = faceGeometryVerticesIndexs
     }

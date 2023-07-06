@@ -44,6 +44,7 @@ extension FTController {
         var blendShapes: [String : Double]? = nil
         var lightEstimate: [String: Double]? = nil
     //    public let depthmap: CVPixelBuffer?
+        var distanceToScreen: Double? = nil
         var lookAtPoint: [String: Double]? = nil
         var faceGeometryVertices: [simd_float3]? = nil
         
@@ -57,6 +58,9 @@ extension FTController {
 //        if configuration.captureDepthMap {
 //            depthmap = getDepthMap()
 //        }
+        if configuration.captureDistanceToScreen {
+            distanceToScreen = getDistanceToScreen(on: faceAnchor)
+        }
         if configuration.captureLookAtPoint {
             lookAtPoint = getLookAtPoint(on: faceAnchor)
         }
@@ -74,6 +78,7 @@ extension FTController {
         let data = FTData(timestamp: timestamp,
                           blendShapes: blendShapes,
                           lightEstimate: lightEstimate,
+                          distanceToScreen: distanceToScreen,
                           lookAtPoint: lookAtPoint,
                           faceGeometryVertices: faceGeometryVertices)
         self.configuration?.dataHandler?(data)
@@ -107,6 +112,26 @@ extension FTController {
     
     private func getDepthMap() -> CVPixelBuffer? {
         sceneView?.session.currentFrame?.capturedDepthData?.depthDataMap
+    }
+    
+    private func getDistanceToScreen(on faceAnchor: ARFaceAnchor) -> Double? {
+        guard let frame = sceneView?.session.currentFrame else { return nil }
+        
+        let deviceTransform = frame.camera.transform.columns.3
+        let devicePosition = simd_float3(x: deviceTransform.x, y: deviceTransform.y, z: deviceTransform.z)
+        
+        // Translating position of the left eye from face to world coordinates
+        let leftEyeWorldTransform = matrix_multiply(faceAnchor.transform, faceAnchor.leftEyeTransform).columns.3
+        let leftEyePosition = simd_float3(x: leftEyeWorldTransform.x, y: leftEyeWorldTransform.y, z: leftEyeWorldTransform.z)
+        
+        // Translating position of the right eye from face to world coordinates
+        let rightEyeWorldTransform = matrix_multiply(faceAnchor.transform, faceAnchor.rightEyeTransform).columns.3
+        let rightEyePosition = simd_float3(x: rightEyeWorldTransform.x, y: rightEyeWorldTransform.y, z: rightEyeWorldTransform.z)
+        
+        // Getting the point in middle betweeen the eyes
+        let eyesPostion = mix(leftEyePosition, rightEyePosition, t: 0.5)
+ 
+        return Double(distance(devicePosition, eyesPostion))
     }
     
     
