@@ -17,7 +17,7 @@ public struct FTData: Codable {
         let lightEstimateString = lightEstimate?.toString() ?? "[]"
         let distanceToScreenString = distanceToScreen.map { String($0) } ?? "nil"
         let lookAtPointString = lookAtPoint?.toString() ?? "[]"
-        let faceGeometryVerticesString = faceGeometryVertices?.map { $0.toString() }.joined(separator: "_") ?? "[]"
+        let faceGeometryVerticesString = "[" + (faceGeometryVertices?.map { $0.toString() }.joined(separator: " ") ?? "[]") + "]"
         
         return "facetracking,\(timestamp),\(blendshapeString),\(lightEstimateString),\(distanceToScreenString),\(lookAtPointString),\(faceGeometryVerticesString)"
     }
@@ -26,12 +26,12 @@ public struct FTData: Codable {
 
 fileprivate extension Dictionary where Key == String, Value == Double {
     func toString() -> String {
-        self.map { "\($0.key):\($0.value)" }.joined(separator: "_")
+        "[" + self.map { "\($0.key):\($0.value)" }.joined(separator: " ") + "]"
     }
 }
 
 fileprivate extension simd_float3 {
     func toString() -> String {
-        return "(\(self.x)-\(self.y)-\(self.z))"
+        "[\(self.x) \(self.y) \(self.z)]"
     }
 }

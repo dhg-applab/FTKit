@@ -26,10 +26,13 @@ public class FTController: NSObject, ARSCNViewDelegate, ARSessionDelegate {
 extension FTController {
     public func renderer(_ renderer: SCNSceneRenderer, nodeFor anchor: ARAnchor) -> SCNNode? {
         guard anchor is ARFaceAnchor else { return nil }
-
-//        contentNode = SCNReferenceNode()
-//        return contentNode
-        return addFaceGeometry()
+        
+        if configuration.showVerticiesInARView {
+            return addFaceGeometry()
+        } else {
+            contentNode = SCNReferenceNode()
+            return contentNode
+        }
     }
     
 
@@ -38,7 +41,6 @@ extension FTController {
               let currentFrame = sceneView?.session.currentFrame else { return }
         
         updateFaceGeometry(on: faceAnchor, with: node)
-        
         
         let timestamp = getTimestamp(timestamp: currentFrame.timestamp)
         var blendShapes: [String : Double]? = nil
@@ -65,15 +67,13 @@ extension FTController {
             lookAtPoint = getLookAtPoint(on: faceAnchor)
         }
         if configuration.captureFaceVertices {
-            if configuration.faceGeometryVerticesIndexs.isEmpty {
-                faceGeometryVertices = faceAnchor.geometry.vertices
-            } else {
-                faceGeometryVertices = []
-                for index in configuration.faceGeometryVerticesIndexs {
-                    faceGeometryVertices!.append(faceAnchor.geometry.vertices[index])
-                }
-            }
+            faceGeometryVertices = getFaceGeometryVerticies(on: faceAnchor)
         }
+        if let folderURL = configuration.captureFramesFolderURL,
+           let filename = configuration.captureFramesFilename {
+            saveImage(to: folderURL, name: filename)
+        }
+        
         
         let data = FTData(timestamp: timestamp,
                           blendShapes: blendShapes,
@@ -141,6 +141,34 @@ extension FTController {
             "lookAtPoint.Y": Double(faceAnchor.lookAtPoint.y),
             "lookAtPoint.Z": Double(faceAnchor.lookAtPoint.z),
         ]
+    }
+    
+    private func getFaceGeometryVerticies(on faceAnchor: ARFaceAnchor) -> [simd_float3] {
+        var faceGeometryVertices: [simd_float3] = []
+        
+        if let indexs = configuration.faceGeometryVerticesIndexs, indexs.isEmpty {
+            faceGeometryVertices = faceAnchor.geometry.vertices
+        } else if let indexs = configuration.faceGeometryVerticesIndexs, !indexs.isEmpty {
+            for index in indexs {
+                faceGeometryVertices.append(faceAnchor.geometry.vertices[index])
+            }
+        } else if let everyXIndex = configuration.faceGeometryVerticesEveryXIndex {
+            for index in stride(from: 0, to: FTConstants.FaceGeometry.numberOfFaceGeometryVertices, by: everyXIndex) {
+                faceGeometryVertices.append(faceAnchor.geometry.vertices[index])
+            }
+        }
+        
+        return faceGeometryVertices
+    }
+    
+    private func saveImage(to url: URL, name: String) {
+        guard let currentFrame = sceneView?.session.currentFrame else { return }
+        let timestamp = getTimestamp(timestamp: currentFrame.timestamp)
+        let imageURL = url.appendingPathComponent("\(name)-\(timestamp).png")
+        
+        guard let image = UIImage(ciImage: CIImage(cvPixelBuffer: currentFrame.capturedImage)).rotate(radians: .pi/2) else { return }
+        
+        try? image.withRenderingMode(.alwaysOriginal).pngData()?.write(to: imageURL)
     }
     
     
