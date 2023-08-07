@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import ARKit
 
 struct FaceTrackingViewModifier: ViewModifier {
     let configuration: FTConfiguration

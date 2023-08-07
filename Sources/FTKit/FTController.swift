@@ -49,7 +49,7 @@ extension FTController {
         var distanceToScreen: Double? = nil
         var lookAtPoint: [String: Double]? = nil
         var faceGeometryVertices: [simd_float3]? = nil
-        
+        let isTrackingFace = faceAnchor.isTracked
         
         if configuration.captureBlendShapes {
             blendShapes = getBlendShapes(on: faceAnchor)
@@ -80,7 +80,8 @@ extension FTController {
                           lightEstimate: lightEstimate,
                           distanceToScreen: distanceToScreen,
                           lookAtPoint: lookAtPoint,
-                          faceGeometryVertices: faceGeometryVertices)
+                          faceGeometryVertices: faceGeometryVertices,
+                          isTrackingFace: isTrackingFace)
         self.configuration?.dataHandler?(data)
     }
     

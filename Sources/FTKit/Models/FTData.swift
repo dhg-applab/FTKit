@@ -9,8 +9,9 @@ public struct FTData: Codable {
     public let distanceToScreen: Double?
     public let lookAtPoint: [String: Double]?
     public let faceGeometryVertices: [simd_float3]?
+    public let isTrackingFace: Bool?
     
-    public static let csvHeader = "type,timestamp,blendshapes,lightestimate,distanceToScreen,lookAtPoint,faceGeometryVertices"
+    public static let csvHeader = "type,timestamp,blendshapes,lightestimate,distanceToScreen,lookAtPoint,faceGeometryVertices,isTrackingFace"
     
     public func toCsv() -> String {
         let blendshapeString = blendShapes?.toString() ?? "[]"
@@ -18,8 +19,9 @@ public struct FTData: Codable {
         let distanceToScreenString = distanceToScreen.map { String($0) } ?? "nil"
         let lookAtPointString = lookAtPoint?.toString() ?? "[]"
         let faceGeometryVerticesString = "[" + (faceGeometryVertices?.map { $0.toString() }.joined(separator: " ") ?? "[]") + "]"
+        let isTrackingFaceString = (isTrackingFace ?? false) ? "True" : "False"
         
-        return "facetracking,\(timestamp),\(blendshapeString),\(lightEstimateString),\(distanceToScreenString),\(lookAtPointString),\(faceGeometryVerticesString)"
+        return "facetracking,\(timestamp),\(blendshapeString),\(lightEstimateString),\(distanceToScreenString),\(lookAtPointString),\(faceGeometryVerticesString),\(isTrackingFaceString)"
     }
 }
 
