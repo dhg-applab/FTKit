@@ -41,6 +41,7 @@ extension View {
         captureFrames: Bool = false,
         captureFramesFolderURL: URL? = nil,
         captureFramesFilename: String? = nil,
+        numberOfTrackedFaces: Int = ARFaceTrackingConfiguration.supportedNumberOfTrackedFaces,
         dataHandler: ((FTData) -> Void)?
     ) -> some View {
         modifier(FaceTrackingViewModifier(configuration: .init(
@@ -58,7 +59,8 @@ extension View {
             faceGeometryVerticesEveryXIndex: faceGeometryVerticesEveryXIndex,
             captureFrames: captureFrames,
             captureFramesFolderURL: captureFramesFolderURL,
-            captureFramesFilename: captureFramesFilename
+            captureFramesFilename: captureFramesFilename,
+            numberOfTrackedFaces: numberOfTrackedFaces
         )))
     }
 }

@@ -10,10 +10,10 @@ public class FTController: NSObject, ARSCNViewDelegate, ARSessionDelegate {
     }
     lazy var arConfiguration: ARConfiguration? = {
         guard ARFaceTrackingConfiguration.isSupported else { return nil }
-        let configuration = ARFaceTrackingConfiguration()
-        configuration.maximumNumberOfTrackedFaces = ARFaceTrackingConfiguration.supportedNumberOfTrackedFaces
-        configuration.isLightEstimationEnabled = true
-        return configuration
+        let arConfiguration = ARFaceTrackingConfiguration()
+        arConfiguration.maximumNumberOfTrackedFaces = configuration.numberOfTrackedFaces
+        arConfiguration.isLightEstimationEnabled = configuration.enableLightEstimate
+        return arConfiguration
     }()
     private var contentNode: SCNReferenceNode?
     
