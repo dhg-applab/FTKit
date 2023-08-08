@@ -26,7 +26,7 @@ struct FaceTrackingViewModifier: ViewModifier {
 }
 
 extension View {
-    func trackingFace(
+    public func trackingFace(
         arConfiguration: ARConfiguration? = nil,
         runOptions: ARSession.RunOptions? = nil,
         showVerticiesInARView: Bool = false,
