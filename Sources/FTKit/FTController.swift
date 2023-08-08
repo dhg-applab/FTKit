@@ -10,10 +10,10 @@ public class FTController: NSObject, ARSCNViewDelegate, ARSessionDelegate {
     }
     lazy var arConfiguration: ARConfiguration? = {
         guard ARFaceTrackingConfiguration.isSupported else { return nil }
-        let configuration = ARFaceTrackingConfiguration()
-        configuration.maximumNumberOfTrackedFaces = ARFaceTrackingConfiguration.supportedNumberOfTrackedFaces
-        configuration.isLightEstimationEnabled = true
-        return configuration
+        let arConfiguration = ARFaceTrackingConfiguration()
+        arConfiguration.maximumNumberOfTrackedFaces = configuration.numberOfTrackedFaces
+        arConfiguration.isLightEstimationEnabled = configuration.enableLightEstimate
+        return arConfiguration
     }()
     private var contentNode: SCNReferenceNode?
     
@@ -49,7 +49,7 @@ extension FTController {
         var distanceToScreen: Double? = nil
         var lookAtPoint: [String: Double]? = nil
         var faceGeometryVertices: [simd_float3]? = nil
-        
+        let isTrackingFace = faceAnchor.isTracked
         
         if configuration.captureBlendShapes {
             blendShapes = getBlendShapes(on: faceAnchor)
@@ -80,7 +80,8 @@ extension FTController {
                           lightEstimate: lightEstimate,
                           distanceToScreen: distanceToScreen,
                           lookAtPoint: lookAtPoint,
-                          faceGeometryVertices: faceGeometryVertices)
+                          faceGeometryVertices: faceGeometryVertices,
+                          isTrackingFace: isTrackingFace)
         self.configuration?.dataHandler?(data)
     }
     

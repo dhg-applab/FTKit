@@ -16,6 +16,7 @@ public struct FTConfiguration {
     let captureFrames: Bool
     let captureFramesFolderURL: URL?
     let captureFramesFilename: String?
+    let numberOfTrackedFaces: Int
     
     public init(dataHandler: ((FTData) -> Void)?,
                 arConfiguration: ARConfiguration? = nil,
@@ -31,7 +32,8 @@ public struct FTConfiguration {
                 faceGeometryVerticesEveryXIndex: Int? = nil,
                 captureFrames: Bool = false,
                 captureFramesFolderURL: URL? = nil,
-                captureFramesFilename: String? = nil) {
+                captureFramesFilename: String? = nil,
+                numberOfTrackedFaces: Int = ARFaceTrackingConfiguration.supportedNumberOfTrackedFaces) {
         self.dataHandler = dataHandler
         self.arConfiguration = arConfiguration
         self.runOptions = runOptions
@@ -50,6 +52,8 @@ public struct FTConfiguration {
         self.captureFrames = captureFrames
         self.captureFramesFolderURL = captureFramesFolderURL
         self.captureFramesFilename = captureFramesFilename
+        
+        self.numberOfTrackedFaces = numberOfTrackedFaces
         
         if captureFrames,
            captureFramesFolderURL == nil || captureFramesFilename == nil {
