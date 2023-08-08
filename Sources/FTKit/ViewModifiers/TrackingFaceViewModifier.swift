@@ -8,10 +8,10 @@
 import SwiftUI
 import ARKit
 
-struct FaceTrackingViewModifier: ViewModifier {
-    let configuration: FTConfiguration
+public struct FaceTrackingViewModifier: ViewModifier {
+    public let configuration: FTConfiguration
 
-    func body(content: Content) -> some View {
+    public func body(content: Content) -> some View {
         content
             .onAppear {
                 if let controller = UIApplication.topViewController() {
