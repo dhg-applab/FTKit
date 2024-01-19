@@ -12,6 +12,16 @@ public final class FTKit {
     
     public private(set) var controller = FTController()
     
+//    private var mppController = MPPController()
+//    
+//    public func startMPP() {
+//        mppController.start()
+//    }
+//    
+//    public func stopMPP() {
+//        mppController.stop()
+//    }
+    
     public func start() {
         let arConfiguration = configuration?.arConfiguration ?? controller.arConfiguration
         let runOptions = configuration?.runOptions ?? [.resetTracking, .removeExistingAnchors]
