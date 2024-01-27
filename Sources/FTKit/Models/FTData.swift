@@ -9,6 +9,7 @@ public struct FTData: Codable {
     public let distanceToScreen: Double?
     public let lookAtPoint: [String: Double]?
     public let faceGeometryVertices: [simd_float3]?
+    /// Returns `false` if no `FaceAnchor` is detected, indicating that ARKit has not identified any faces.
     public let isTrackingFace: Bool?
     
     public static let csvHeader = "type,timestamp,blendshapes,lightestimate,distanceToScreen,lookAtPoint,faceGeometryVertices,isTrackingFace"

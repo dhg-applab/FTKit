@@ -1,9 +1,7 @@
 import ARKit
 
 public struct FTConfiguration {
-    /// Handler that gets called with new `FTData` in response to ARKit updates.
-    /// Returns `nil` if no `FaceAnchor` is detected, indicating that ARKit has not identified any faces.
-    let dataHandler: ((FTData?) -> Void)?
+    let dataHandler: ((FTData) -> Void)?
     let arConfiguration: ARConfiguration?
     let runOptions: ARSession.RunOptions?
     let showVerticiesInARView: Bool
@@ -20,7 +18,7 @@ public struct FTConfiguration {
     let captureFramesFilename: String?
     let numberOfTrackedFaces: Int
     
-    public init(dataHandler: ((FTData?) -> Void)?,
+    public init(dataHandler: ((FTData) -> Void)?,
                 arConfiguration: ARConfiguration? = nil,
                 runOptions: ARSession.RunOptions? = nil,
                 showVerticiesInARView: Bool = false,
