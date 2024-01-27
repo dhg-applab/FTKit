@@ -42,7 +42,7 @@ extension View {
         captureFramesFolderURL: URL? = nil,
         captureFramesFilename: String? = nil,
         numberOfTrackedFaces: Int = ARFaceTrackingConfiguration.supportedNumberOfTrackedFaces,
-        dataHandler: ((FTData) -> Void)?
+        dataHandler: ((FTData?) -> Void)?
     ) -> some View {
         modifier(FaceTrackingViewModifier(configuration: .init(
             dataHandler: dataHandler,

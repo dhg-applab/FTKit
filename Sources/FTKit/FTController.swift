@@ -37,8 +37,11 @@ extension FTController {
     
 
     public func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
-        guard let faceAnchor = anchor as? ARFaceAnchor,
-              let currentFrame = sceneView?.session.currentFrame else { return }
+        guard let faceAnchor = anchor as? ARFaceAnchor else {
+            self.configuration?.dataHandler?(nil)
+            return
+        }
+        guard let currentFrame = sceneView?.session.currentFrame else { return }
         
         updateFaceGeometry(on: faceAnchor, with: node)
         
