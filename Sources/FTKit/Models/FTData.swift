@@ -13,6 +13,22 @@ public struct FTData: Codable {
     
     public static let csvHeader = "type,timestamp,blendshapes,lightestimate,distanceToScreen,lookAtPoint,faceGeometryVertices,isTrackingFace"
     
+    public init(timestamp: Double,
+                blendShapes: [String : Double]? = nil,
+                lightEstimate: [String : Double]? = nil,
+                distanceToScreen: Double? = nil,
+                lookAtPoint: [String : Double]? = nil,
+                faceGeometryVertices: [simd_float3]? = nil,
+                isTrackingFace: Bool? = nil) {
+        self.timestamp = timestamp
+        self.blendShapes = blendShapes
+        self.lightEstimate = lightEstimate
+        self.distanceToScreen = distanceToScreen
+        self.lookAtPoint = lookAtPoint
+        self.faceGeometryVertices = faceGeometryVertices
+        self.isTrackingFace = isTrackingFace
+    }
+    
     public func toCsv() -> String {
         let blendshapeString = blendShapes?.toString() ?? "[]"
         let lightEstimateString = lightEstimate?.toString() ?? "[]"
